@@ -1,0 +1,13 @@
+{
+	"comment": "",
+	"ignore": "test",
+	"package": [
+		{
+			"checksumSHA1": "yQ+rTDuaWet2YH1rdiIysyCKaDk=",
+			"path": "github.com/go-redis/redis",
+			"revision": "02692634419948b2dfd20b2057c51b24f3775db9",
+			"revisionTime": "2018-05-31T18:40:56Z"
+		}
+	],
+	"rootPath": "github.com/MonitorMetrics/redis"
+}
