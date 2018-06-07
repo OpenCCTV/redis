@@ -40,6 +40,8 @@ func Gets(addr, password string) (*map[string]interface{}, error) {
 				Password: "",
 				DB:       0,
 			})
+			defer client.Close()
+
 			pong, err = client.Ping().Result()
 		} else {
 			result["ping"] = PingDown
