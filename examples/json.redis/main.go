@@ -6,7 +6,7 @@ import (
 	"flag"
 	"fmt"
 
-	"github.com/MonitorMetrics/redis/redis"
+	"github.com/OpenCCTV/redis/redis"
 )
 
 var (

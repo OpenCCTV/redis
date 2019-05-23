@@ -8,9 +8,9 @@ import (
 	"log"
 	"time"
 
-	"github.com/MonitorMetrics/falcon_helpers/agent"
-	"github.com/MonitorMetrics/falcon_helpers/model"
-	"github.com/MonitorMetrics/redis/redis"
+	"github.com/OpenCCTV/falcon_helpers/agent"
+	"github.com/OpenCCTV/falcon_helpers/model"
+	"github.com/OpenCCTV/redis/redis"
 )
 
 var (
@@ -51,9 +51,9 @@ func funcCallback(m *[]map[string]interface{}, args ...interface{}) {
 		return
 	}
 
-	respBody := helperAgent.SendToFalconAgent(*FalconURL, string(out))
+	respCode, respBody := helperAgent.SendToFalconAgent(*FalconURL, string(out))
 	if *Debug {
-		log.Println("falcon response", respBody)
+		log.Println("falcon response", respCode, respBody)
 	}
 }
 

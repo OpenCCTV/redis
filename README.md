@@ -126,8 +126,8 @@ All keys  will transform into following formats
 
 Build example
 
-	go get -v github.com/MonitorMetrics/redis
-	cd $GOPATH/src/github.com/MonitorMetrics/redis/examples/json.redis
+	go get -v github.com/OpenCCTV/redis
+	cd $GOPATH/src/github.com/OpenCCTV/redis/examples/json.redis
 	go build -o json.redis.bin
 
 

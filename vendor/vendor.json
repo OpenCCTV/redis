@@ -3,6 +3,24 @@
 	"ignore": "test",
 	"package": [
 		{
+			"checksumSHA1": "Egp1ZMBSu/4Z+GGm69RTsyPj1xI=",
+			"path": "github.com/OpenCCTV/redis/examples/json.redis",
+			"revision": "3b8421a74f42e0a168eaa7091d8b54b7b945c3c4",
+			"revisionTime": "2019-05-23T12:56:48Z"
+		},
+		{
+			"checksumSHA1": "k4D2K7aCZFemMrUf2uPFBXYx0RY=",
+			"path": "github.com/OpenCCTV/redis/examples/openfalcon.redis",
+			"revision": "3b8421a74f42e0a168eaa7091d8b54b7b945c3c4",
+			"revisionTime": "2019-05-23T12:56:48Z"
+		},
+		{
+			"checksumSHA1": "z/HJbHF7JQJX57Va/N+VCfVg/dQ=",
+			"path": "github.com/OpenCCTV/redis/redis",
+			"revision": "3b8421a74f42e0a168eaa7091d8b54b7b945c3c4",
+			"revisionTime": "2019-05-23T12:56:48Z"
+		},
+		{
 			"checksumSHA1": "yQ+rTDuaWet2YH1rdiIysyCKaDk=",
 			"path": "github.com/go-redis/redis",
 			"revision": "02692634419948b2dfd20b2057c51b24f3775db9",
@@ -51,5 +69,5 @@
 			"revisionTime": "2018-05-31T18:40:56Z"
 		}
 	],
-	"rootPath": "github.com/MonitorMetrics/redis"
+	"rootPath": "github.com/OpenCCTV/redis"
 }
