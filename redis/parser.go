@@ -88,12 +88,12 @@ func computingHitRate(m *map[string]interface{}) (rate int, err error) {
 func ComputingUsedMemoryRate(m *map[string]interface{}) (rate int, err error) {
 	usedMemoryI, ok := (*m)["used_memory"].(string)
 	if !ok {
-		return
+		return -1, err = errors.New("used_memory invalid")
 	}
 
 	usedMemory, err := strconv.ParseFloat(usedMemoryI, 64)
 	if err != nil {
-		return
+		return -1, err = errors.New("used_memory invalid")
 	}
 	if err == nil {
 		cfgMaxmemory, ok := (*m)["cfg_maxmemory"].(float64)
