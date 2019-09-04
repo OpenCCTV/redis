@@ -111,3 +111,68 @@ func getMaxMemory(client *redis.Client) (maxMemory float64, err error) {
 	}
 	return
 }
+
+func GetClusterInfo(addr, password string) (*map[string]interface{}, error) {
+	result := map[string]interface{}{}
+
+	// TCP connection status test
+	conn, err := net.DialTimeout("tcp", addr, time.Duration(2)*time.Second)
+	if err != nil {
+		result["ping"] = PingDown
+		return &result, err
+	}
+	defer conn.Close()
+	result["ping"] = PingUp
+
+	client := redis.NewClient(&redis.Options{
+		Addr:     addr,
+		Password: password,
+		DB:       0,
+	})
+	defer client.Close()
+
+	// redis ping-pong test
+	pong, err := client.Ping().Result()
+	if err != nil {
+		log.Println("net.DialTimeout", addr, password, err)
+
+		errStr := strings.ToLower(err.Error())
+		if strings.Index(errStr, "but no password is set") != -1 {
+			// walk around issue redis raise error if you send auth password but it not required
+			client = redis.NewClient(&redis.Options{
+				Addr:     addr,
+				Password: "",
+				DB:       0,
+			})
+			defer client.Close()
+
+			pong, err = client.Ping().Result()
+		} else {
+			result["ping"] = PingDown
+			return &result, err
+		}
+	}
+
+	if err != nil {
+		result["ping"] = PingUp
+		return &result, err
+	}
+
+	if pong != "PONG" {
+		err = errors.New("redis ping got unexpected response")
+		result["ping"] = PingUnknown
+		return &result, err
+	}
+
+	reply, err := client.ClusterInfo().Result()
+	if err != nil {
+		log.Println("get cluster info failed", addr, err)
+		result["ping"] = PingUnknown
+		return &result, err
+	}
+
+	m := map[string]interface{}{}
+	ParseReplyClusterInfo(&reply, &m)
+
+	return &m, nil
+}

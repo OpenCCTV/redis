@@ -58,6 +58,25 @@ func ParseReplyInfo(reply *string, result *map[string]interface{}) {
 	}
 }
 
+func ParseReplyClusterInfo(reply *string, result *map[string]interface{}) {
+	for _, line := range strings.Split(*reply, "\n") {
+		line = strings.TrimSpace(line)
+		if line == "" {
+			continue
+		}
+
+		// skip line not match pattern `key:value`
+		parts := strings.Split(line, ":")
+		if len(parts) != 2 {
+			continue
+		}
+
+		key := parts[0]
+		value := parts[1]
+		(*result)[key] = value
+	}
+}
+
 func computingHitRate(m *map[string]interface{}) (rate int, err error) {
 	keyspaceHitsI, ok := (*m)["keyspace_hits"].(string)
 	if !ok {
