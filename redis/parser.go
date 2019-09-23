@@ -19,7 +19,7 @@ func SliceIndex(limit int, predicate func(i int) bool) int {
 }
 
 func ParseReplyInfo(reply *string, result *map[string]interface{}) {
-	keysCount := len(MetricKeys)
+	//keysCount := len(MetricKeys)
 
 	dbsize := 0
 	for _, line := range strings.Split(*reply, "\n") {
@@ -50,7 +50,8 @@ func ParseReplyInfo(reply *string, result *map[string]interface{}) {
 				subkey = fmt.Sprintf("%s_%s", key, subkey)
 				(*result)[subkey] = subvalue
 			}
-		} else if SliceIndex(keysCount, func(i int) bool { return MetricKeys[i] == key }) != -1 {
+			//} else if SliceIndex(keysCount, func(i int) bool { return MetricKeys[i] == key }) != -1 {
+		} else {
 			(*result)[key] = value
 		}
 

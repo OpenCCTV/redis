@@ -4,16 +4,27 @@ import (
 	"errors"
 	"log"
 	"net"
-	"strconv"
 	"strings"
+	"sync"
 	"time"
 
 	"github.com/go-redis/redis"
 )
 
-func Gets(addr, password string) (*map[string]interface{}, error) {
-	result := map[string]interface{}{}
+var (
+	ConnPools = make(map[string]*redis.Client)
+	cpLock    = new(sync.RWMutex)
+)
 
+func GetConnPools() *map[string]*redis.Client {
+	cpLock.RLock()
+	defer cpLock.RUnlock()
+	return &ConnPools
+}
+
+func GetInfoByPool(addr, password string) (*map[string]interface{}, error) {
+	result := map[string]interface{}{}
+	inscKey := addr
 	// TCP connection status test
 	conn, err := net.DialTimeout("tcp", addr, time.Duration(2)*time.Second)
 	if err != nil {
@@ -22,13 +33,27 @@ func Gets(addr, password string) (*map[string]interface{}, error) {
 	}
 	defer conn.Close()
 	result["ping"] = PingUp
+	var client *redis.Client = nil
 
-	client := redis.NewClient(&redis.Options{
-		Addr:     addr,
-		Password: password,
-		DB:       0,
-	})
-	defer client.Close()
+	cpLock.Lock()
+	if _, ok := ConnPools[inscKey]; ok {
+		client = ConnPools[inscKey]
+	} else {
+		client = redis.NewClient(&redis.Options{
+			Addr:     addr,
+			Password: password,
+			DB:       0,
+		})
+		ConnPools[inscKey] = client
+	}
+	if client == nil {
+		client = redis.NewClient(&redis.Options{
+			Addr:     addr,
+			Password: password,
+			DB:       0,
+		})
+		ConnPools[inscKey] = client
+	}
 
 	// redis ping-pong test
 	pong, err := client.Ping().Result()
@@ -43,25 +68,28 @@ func Gets(addr, password string) (*map[string]interface{}, error) {
 				Password: "",
 				DB:       0,
 			})
-			defer client.Close()
-
 			pong, err = client.Ping().Result()
 		} else {
 			result["ping"] = PingDown
+			cpLock.Unlock()
 			return &result, err
 		}
 	}
+	ConnPools[inscKey] = client
 
 	if err != nil {
 		result["ping"] = PingUp
+		cpLock.Unlock()
 		return &result, err
 	}
 
 	if pong != "PONG" {
 		err = errors.New("redis ping got unexpected response")
 		result["ping"] = PingUnknown
+		cpLock.Unlock()
 		return &result, err
 	}
+	cpLock.Unlock()
 
 	reply, err := client.Info().Result()
 	if err != nil {
@@ -95,26 +123,9 @@ func Gets(addr, password string) (*map[string]interface{}, error) {
 	return &m, nil
 }
 
-func getMaxMemory(client *redis.Client) (maxMemory float64, err error) {
-	resultMaxMemory, err := client.ConfigGet("maxmemory").Result()
-	if err != nil {
-		return
-	}
-
-	if len(resultMaxMemory) != 2 {
-		return
-	}
-
-	maxMemory, err = strconv.ParseFloat(resultMaxMemory[1].(string), 64)
-	if err != nil {
-		return
-	}
-	return
-}
-
-func GetClusterInfo(addr, password string) (*map[string]interface{}, error) {
+func GetClusterInfoByPool(addr, password string) (*map[string]interface{}, error) {
 	result := map[string]interface{}{}
-
+	inscKey := addr
 	// TCP connection status test
 	conn, err := net.DialTimeout("tcp", addr, time.Duration(2)*time.Second)
 	if err != nil {
@@ -123,13 +134,27 @@ func GetClusterInfo(addr, password string) (*map[string]interface{}, error) {
 	}
 	defer conn.Close()
 	result["ping"] = PingUp
+	var client *redis.Client = nil
 
-	client := redis.NewClient(&redis.Options{
-		Addr:     addr,
-		Password: password,
-		DB:       0,
-	})
-	defer client.Close()
+	cpLock.Lock()
+	if _, ok := ConnPools[inscKey]; ok {
+		client = ConnPools[inscKey]
+	} else {
+		client = redis.NewClient(&redis.Options{
+			Addr:     addr,
+			Password: password,
+			DB:       0,
+		})
+		ConnPools[inscKey] = client
+	}
+	if client == nil {
+		client = redis.NewClient(&redis.Options{
+			Addr:     addr,
+			Password: password,
+			DB:       0,
+		})
+		ConnPools[inscKey] = client
+	}
 
 	// redis ping-pong test
 	pong, err := client.Ping().Result()
@@ -144,29 +169,32 @@ func GetClusterInfo(addr, password string) (*map[string]interface{}, error) {
 				Password: "",
 				DB:       0,
 			})
-			defer client.Close()
-
 			pong, err = client.Ping().Result()
 		} else {
 			result["ping"] = PingDown
+			cpLock.Unlock()
 			return &result, err
 		}
 	}
+	ConnPools[inscKey] = client
 
 	if err != nil {
 		result["ping"] = PingUp
+		cpLock.Unlock()
 		return &result, err
 	}
 
 	if pong != "PONG" {
 		err = errors.New("redis ping got unexpected response")
 		result["ping"] = PingUnknown
+		cpLock.Unlock()
 		return &result, err
 	}
+	cpLock.Unlock()
 
 	reply, err := client.ClusterInfo().Result()
 	if err != nil {
-		log.Println("get cluster info failed", addr, err)
+		log.Println("get info failed", addr, err)
 		result["ping"] = PingUnknown
 		return &result, err
 	}

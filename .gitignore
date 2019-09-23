@@ -3,5 +3,5 @@
 
 *~
 *.bak
-
+.vscode/
 vendor/
