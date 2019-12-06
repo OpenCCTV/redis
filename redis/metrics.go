@@ -78,6 +78,9 @@ var (
 		"keyspace_hits":              "COUNTER",
 		"keyspace_misses":            "COUNTER",
 		"expired_keys":               "COUNTER",
+		"used_cpu_sys":               "COUNTER",
+		"used_cpu_sys_children":      "COUNTER",
+		"total_net_input_bytes":      "COUNTER",
 	}
 	DefaultMetricCounterType = "GAUGE"
 )
