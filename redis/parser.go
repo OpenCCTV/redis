@@ -3,6 +3,7 @@ package metricsRedis
 import (
 	"errors"
 	"fmt"
+	"regexp"
 	"strconv"
 	"strings"
 )
@@ -75,6 +76,16 @@ func ParseReplyClusterInfo(reply *string, result *map[string]interface{}) {
 		key := parts[0]
 		value := parts[1]
 		(*result)[key] = value
+	}
+}
+
+func ParseCommandStatsInfo(reply *string, result *map[string]interface{}) {
+	regCommandStats := regexp.MustCompile(`(.*):calls=(.*),usec=(.*),usec_per_call=(.*)`)
+	for _, line := range strings.Split(*reply, "\n") {
+		subMatch := regCommandStats.FindAllStringSubmatch(line, -1)
+		(*result)[subMatch[0][1]+"_calls"], _ = strconv.ParseFloat(subMatch[0][2], 64)
+		(*result)[subMatch[0][1]+"_usec"], _ = strconv.ParseFloat(subMatch[0][3], 64)
+		(*result)[subMatch[0][1]+"_usec_per_call"], _ = strconv.ParseFloat(subMatch[0][14], 64)
 	}
 }
 
