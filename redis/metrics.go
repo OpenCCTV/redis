@@ -81,6 +81,9 @@ var (
 		"used_cpu_sys":               "COUNTER",
 		"used_cpu_sys_children":      "COUNTER",
 		"total_net_input_bytes":      "COUNTER",
+		"total_net_output_bytes":     "COUNTER",
+		"blocked_clients":            "COUNTER",
+		"rejected_connections":       "COUNTER",
 	}
 	DefaultMetricCounterType = "GAUGE"
 )
