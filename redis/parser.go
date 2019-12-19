@@ -80,7 +80,7 @@ func ParseReplyClusterInfo(reply *string, result *map[string]interface{}) {
 }
 
 func ParseCommandStatsInfo(reply *string, result *map[string]interface{}) {
-	regCommandStats := regexp.MustCompile(`(.*):calls=(.*),usec=(.*),usec_per_call=(.*)`)
+	regCommandStats := regexp.MustCompile(`(.*):calls=(.*),usec=(.*),usec_per_call=(.*)\r`)
 	for _, line := range strings.Split(*reply, "\n") {
 		if regCommandStats.MatchString(line) {
 			subMatch := regCommandStats.FindAllStringSubmatch(line, -1)
