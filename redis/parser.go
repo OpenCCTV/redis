@@ -23,6 +23,7 @@ func ParseReplyInfo(reply *string, result *map[string]interface{}) {
 	//keysCount := len(MetricKeys)
 
 	dbsize := 0
+	allKeys := int64(0)
 	for _, line := range strings.Split(*reply, "\n") {
 		line = strings.TrimSpace(line)
 		if line == "" {
@@ -48,8 +49,15 @@ func ParseReplyInfo(reply *string, result *map[string]interface{}) {
 				subkey := parts[0]
 				subvalue := parts[1]
 
+				subkeyTmp := subkey
 				subkey = fmt.Sprintf("%s_%s", key, subkey)
 				(*result)[subkey] = subvalue
+				if subkeyTmp == "keys" {
+					keyTmp, err := strconv.ParseInt(subvalue, 10, 64)
+					if err == nil {
+						allKeys += keyTmp
+					}
+				}
 			}
 			//} else if SliceIndex(keysCount, func(i int) bool { return MetricKeys[i] == key }) != -1 {
 		} else {
@@ -57,6 +65,11 @@ func ParseReplyInfo(reply *string, result *map[string]interface{}) {
 		}
 
 		(*result)["dbsize"] = dbsize
+	}
+	if allKeys > 0 {
+		(*result)["allkeys"] = strconv.FormatInt(allKeys, 10)
+	} else {
+		(*result)["allkeys"] = -1
 	}
 }
 
