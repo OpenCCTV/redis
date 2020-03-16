@@ -60,6 +60,7 @@ func GetInfoByPool(addr, password string) (*map[string]interface{}, error) {
 	if err != nil {
 		log.Println("net.DialTimeout", addr, password, err)
 
+		client = nil // delete the error client
 		errStr := strings.ToLower(err.Error())
 		if strings.Index(errStr, "but no password is set") != -1 {
 			// walk around issue redis raise error if you send auth password but it not required
@@ -243,6 +244,7 @@ func GetInfoCommandStatsByPool(addr, password string) (*map[string]interface{}, 
 	if err != nil {
 		log.Println("net.DialTimeout", addr, password, err)
 
+		client = nil // delete the error client
 		errStr := strings.ToLower(err.Error())
 		if strings.Index(errStr, "but no password is set") != -1 {
 			// walk around issue redis raise error if you send auth password but it not required
