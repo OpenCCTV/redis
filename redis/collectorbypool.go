@@ -160,7 +160,7 @@ func GetClusterInfoByPool(addr, password string) (*map[string]interface{}, error
 	pong, err := client.Ping().Result()
 	if err != nil {
 		log.Println("net.DialTimeout", addr, password, err)
-
+		client = nil // delete the error client
 		errStr := strings.ToLower(err.Error())
 		if strings.Index(errStr, "but no password is set") != -1 {
 			// walk around issue redis raise error if you send auth password but it not required
