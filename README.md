@@ -1,5 +1,9 @@
 # Redis metrics for monitoring.
 
+![Go](https://github.com/OpenCCTV/redis/workflows/Go/badge.svg?branch=master)
+[![Go Report Card](https://goreportcard.com/badge/github.com/OpenCCTV/redis)](https://goreportcard.com/report/github.com/OpenCCTV/redis)
+[![LICENSE](https://img.shields.io/github/license/OpenCCTV/redis.svg?style=flat-square)](https://github.com/OpenCCTV/redis/blob/master/LICENSE)
+
 We do not parse values in `int` or `float*` type and keep them original, end-user should take care type by itself.
 For example, Open-falcon will parses all values into JSON `float64` finally.
 
