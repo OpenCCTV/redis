@@ -72,6 +72,7 @@ func GetInfoByPool(addr, password string) (*map[string]interface{}, error) {
 			pong, err = client.Ping().Result()
 		} else {
 			result["ping"] = PingDown
+			ConnPools[inscKey] = client
 			cpLock.Unlock()
 			return &result, err
 		}
@@ -173,6 +174,7 @@ func GetClusterInfoByPool(addr, password string) (*map[string]interface{}, error
 			pong, err = client.Ping().Result()
 		} else {
 			result["ping"] = PingDown
+			ConnPools[inscKey] = client
 			cpLock.Unlock()
 			return &result, err
 		}
@@ -256,6 +258,7 @@ func GetInfoCommandStatsByPool(addr, password string) (*map[string]interface{}, 
 			pong, err = client.Ping().Result()
 		} else {
 			result["ping"] = PingDown
+			ConnPools[inscKey] = client
 			cpLock.Unlock()
 			return &result, err
 		}
